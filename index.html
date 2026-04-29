@@ -140,16 +140,30 @@
             const f = document.getElementById('form-container');
             const b = document.getElementById('toggle-btn');
             f.classList.toggle('hidden');
+            
+            // Inicijalizacija Captche kad se forma prikaže
+            if (!f.classList.contains('hidden')) {
+                setTimeout(() => {
+                    const container = document.getElementById('recaptcha-container');
+                    if (container && container.innerHTML === "") {
+                        grecaptcha.render('recaptcha-container', {
+                            'sitekey': '6Legi88sAAAAAOJj1zvesrRPas1wutu4-LQ6BRp9',
+                            'theme': 'dark'
+                        });
+                    }
+                }, 150);
+            }
+            
             b.innerText = f.classList.contains('hidden') ? "Objavi" : "Zatvori";
         };
 
         window.handlePostSubmit = async (e) => {
             e.preventDefault();
 
-            // Provjera reCAPTCHA
+            // Provjera Captche
             const captchaResponse = grecaptcha.getResponse();
             if (!captchaResponse) {
-                notify("Molimo potvrdite da niste robot!");
+                notify("Molimo označi 'Nisam robot'!");
                 return;
             }
 
@@ -169,7 +183,7 @@
                 });
                 
                 e.target.reset();
-                grecaptcha.reset(); // Resetiraj captchu nakon slanja
+                grecaptcha.reset(); 
                 notify("Poslano na pregled! ✨");
                 window.toggleForm();
             } catch (err) { 
@@ -237,7 +251,7 @@
                                         <div class="space-y-2"><label class="label">Tvoj kontakt (opcionalno)</label><input id="txt-contact" type="text" placeholder="@instagram ili broj" class="input"></div>
                                         
                                         <div class="flex justify-center py-2">
-                                            <div class="g-recaptcha" data-sitekey="6Legi88sAAAAAOJj1zvesrRPas1wutu4-LQ6BRp9" data-theme="dark"></div>
+                                            <div id="recaptcha-container"></div>
                                         </div>
 
                                         <button type="submit" class="w-full bg-rose-600 text-white font-black py-4 rounded-full uppercase tracking-widest text-[10px] hover:bg-rose-500 transition-all">Pošalji na pregled</button>
@@ -329,10 +343,10 @@
         .tag { font-size: 8px; font-weight: 900; text-transform: uppercase; background: rgba(225, 29, 72, 0.15); color: #fb7185; padding: 5px 14px; border-radius: 99px; width: fit-content; letter-spacing: 0.05em; }
         .animate-slide-up { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Centriranje Captche na mobitelu */
-        .g-recaptcha { transform: scale(0.9); transform-origin: center; }
-        @media (max-width: 400px) { .g-recaptcha { transform: scale(0.75); } }
+
+        /* Responsive Captcha */
+        #recaptcha-container { transform: scale(0.85); transform-origin: center; }
+        @media (max-width: 400px) { #recaptcha-container { transform: scale(0.75); } }
 
         select option { background: #111; }
         ::-webkit-scrollbar { width: 4px; }
