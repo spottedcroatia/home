@@ -71,10 +71,14 @@
         function getTimeStyles(ts) {
             if (!ts) return "from-white to-rose-50/30 border-black/5";
             const hour = new Date(ts.seconds * 1000).getHours();
-            if (hour >= 5 && hour < 10) return "from-orange-100/50 to-white border-orange-200/50";
-            if (hour >= 10 && hour < 17) return "from-blue-50/50 to-white border-blue-200/50";
-            if (hour >= 17 && hour < 21) return "from-purple-50/50 to-white border-purple-200/50";
-            return "from-slate-100/50 to-white border-slate-200/50";
+            // Jutro (5h - 10h)
+            if (hour >= 5 && hour < 10) return "from-orange-100/60 to-rose-50/40 border-orange-200/50";
+            // Dan (10h - 17h)
+            if (hour >= 10 && hour < 17) return "from-blue-50/80 to-white border-blue-100/50";
+            // Večer (17h - 21h)
+            if (hour >= 17 && hour < 21) return "from-purple-100/50 to-indigo-50/30 border-purple-200/40";
+            // Noć (21h - 5h)
+            return "from-slate-800/5 to-slate-200/20 border-slate-300/30";
         }
 
         function formatDate(ts) {
