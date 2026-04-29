@@ -223,7 +223,10 @@
         function renderUI() {
             document.getElementById('root').innerHTML = `
                 <div class="min-h-screen relative overflow-x-hidden text-white pb-20">
-                    <div class="gradient-bg"></div>
+                    <div class="bg-container">
+    <div class="blob"></div>
+    <div class="blob blob-2"></div>
+</div>
                     
                     <nav class="fixed top-0 inset-x-0 h-16 bg-black/40 backdrop-blur-3xl border-b border-white/5 z-50 flex items-center">
                         <div class="max-w-xl mx-auto px-6 w-full flex justify-between items-center">
@@ -333,11 +336,51 @@
             100% { background-position: 0% 50%; }
         }
 
-        .card { 
-            border-width: 1px;
+        /* DINAMIČNI MORPHING GRADIENT POZADINA */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            background: #000;
+            overflow: hidden;
+        }
+
+        .blob {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(135deg, rgba(225, 29, 72, 0.25) 0%, rgba(79, 70, 229, 0.25) 100%);
+            filter: blur(80px);
+            border-radius: 50%;
+            animation: morph 20s infinite alternate ease-in-out;
+        }
+
+        .blob-2 {
+            right: -10%;
+            top: -10%;
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%);
+            animation-duration: 25s;
+            animation-delay: -5s;
+        }
+
+        @keyframes morph {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+            33% { transform: translate(15vw, 15vh) scale(1.2) rotate(90deg); border-radius: 70% 30% 50% 50% / 30% 60% 40% 70%; }
+            66% { transform: translate(-10vw, 20vh) scale(0.8) rotate(180deg); border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+            100% { transform: translate(0, 0) scale(1) rotate(360deg); border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
+        }
+
+       .card { 
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 2rem; 
-            backdrop-filter: blur(20px); 
-            transition: transform 0.3s ease, border-color 0.3s ease;
+            backdrop-filter: blur(20px); /* Ovo "zamuti" pozadinu iza kartice */
+            background: rgba(255, 255, 255, 0.02); 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .card:hover {
             transform: translateY(-4px);
