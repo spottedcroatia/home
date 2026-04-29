@@ -9,8 +9,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Spotted Croatia | Pronađi osobu koja ti je zapela za oko!</title>
-    <meta name="description" content="Tražiš nekoga iz Zagreba, Splita, Rijeke ili Osijeka? Spotted Croatia ti pomaže pronaći tajanstvenu osobu koju si sreo/la u gradu ili kafiću.">
-    <meta name="keywords" content="spotted croatia, spotted zagreb, spotted split, upoznavanje, hrvatska, ljubav, kafići">
     
     <link rel="icon" href="https://fav.farm/❤️">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -69,24 +67,24 @@
         }
 
         function getTimeStyles(ts) {
-            // Ako nema timestampa (npr. tek objavljeno), koristi trenutno vrijeme uređaja
-            const date = ts ? new Date(ts.seconds * 1000) : new Date();
-            const hour = date.getHours();
+            let hour;
+            try {
+                // Pokušaj izvući sat iz timestampa, ako ne ide, uzmi trenutno vrijeme
+                hour = (ts && ts.seconds) ? new Date(ts.seconds * 1000).getHours() : new Date().getHours();
+            } catch(e) {
+                hour = new Date().getHours();
+            }
             
-            // Jutro (5h - 11h): Topla jutarnja narančasta
-            if (hour >= 5 && hour < 11) 
-                return "background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%) !important; border: 1px solid #fed7aa !important;";
-            
-            // Dan (11h - 18h): Vedro plava
-            if (hour >= 11 && hour < 18) 
-                return "background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%) !important; border: 1px solid #bae6fd !important;";
-            
-            // Večer (18h - 22h): Sumrak ljubičasta
-            if (hour >= 18 && hour < 22) 
-                return "background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%) !important; border: 1px solid #ddd6fe !important;";
-            
-            // Noć (22h - 5h): Mirna sivo-plava
-            return "background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important; border: 1px solid #e2e8f0 !important;";
+            // Definicija boja (Fallback + Gradient + Border)
+            if (hour >= 5 && hour < 11) {
+                return "background-color: #fff7ed !important; background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%) !important; border: 1px solid #fed7aa !important;";
+            } else if (hour >= 11 && hour < 18) {
+                return "background-color: #f0f9ff !important; background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%) !important; border: 1px solid #bae6fd !important;";
+            } else if (hour >= 18 && hour < 22) {
+                return "background-color: #f5f3ff !important; background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%) !important; border: 1px solid #ddd6fe !important;";
+            } else {
+                return "background-color: #f8fafc !important; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important; border: 1px solid #e2e8f0 !important;";
+            }
         }
 
         function formatDate(ts) {
@@ -173,10 +171,8 @@
             e.preventDefault();
             const captchaResponse = grecaptcha.getResponse(captchaWidgetId);
             if (!captchaResponse) { notify("Molimo potvrdite da niste robot."); return; }
-
             const btn = e.target.querySelector('button[type="submit"]');
             btn.disabled = true; btn.innerText = "Slanje...";
-            
             try {
                 await addDoc(getCollectionRef(), {
                     text: document.getElementById('txt-desc').value,
@@ -240,7 +236,6 @@
                             </div>
                         </div>
                     </nav>
-
                     <main class="relative max-w-xl mx-auto px-6 pt-24 z-10">
                         ${isAdmin ? `<section class="card p-6 mb-10 border-rose-500/20 bg-rose-50/50"><h3 class="text-[10px] font-black text-rose-500 uppercase mb-4 tracking-widest">Moderacija</h3><div id="admin-queue"></div></section>` : `
                             <div class="flex flex-col items-center mb-12">
@@ -259,17 +254,14 @@
                                 </div>
                             </div>
                         `}
-
                         <div id="feed-header" class="flex items-center gap-4 mb-8">
                             <div class="h-[1px] bg-black/5 flex-1"></div>
                             <span class="text-[9px] font-black tracking-[0.5em] uppercase text-gray-400">Najnovije objave</span>
                             <div id="active-filter-info"></div>
                             <div class="h-[1px] bg-black/5 flex-1"></div>
                         </div>
-
                         <div id="feed"></div>
                     </main>
-
                     <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-8 py-4 rounded-full text-[10px] font-black uppercase tracking-widest opacity-0 translate-y-10 transition-all duration-500 z-[100] shadow-2xl"></div>
                 </div>`;
         }
@@ -303,101 +295,24 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
-        
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: #fff7ed; 
-            color: #1a1a1a; 
-            margin: 0;
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-        }
-
-        .gradient-bg {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            background: #fff7ed;
-            overflow: hidden;
-        }
-
-        .blob {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            filter: blur(80px);
-            border-radius: 50%;
-            opacity: 0.4;
-            animation: move 25s infinite alternate ease-in-out;
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff7ed; color: #1a1a1a; margin: 0; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        .gradient-bg { position: fixed; inset: 0; z-index: -1; background: #fff7ed; overflow: hidden; }
+        .blob { position: absolute; width: 600px; height: 600px; filter: blur(80px); border-radius: 50%; opacity: 0.4; animation: move 25s infinite alternate ease-in-out; }
         .blob-1 { top: -10%; left: -10%; background: #fb7185; }
         .blob-2 { bottom: -10%; right: -10%; background: #38bdf8; animation-delay: -5s; }
         .blob-3 { top: 40%; left: 30%; background: #fbbf24; animation-delay: -10s; }
-
-        @keyframes move {
-            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-            33% { transform: translate(100px, 50px) scale(1.1) rotate(90deg); }
-            66% { transform: translate(-50px, 150px) scale(0.9) rotate(180deg); }
-            100% { transform: translate(0, 0) scale(1) rotate(360deg); }
-        }
-
-        .card { 
-            border-radius: 2.5rem; 
-            backdrop-filter: blur(20px);
-            /* Osnovni stil ako JS ne stigne učitati boju odmah */
-            background: rgba(255, 255, 255, 0.7);
-            box-shadow: 0 20px 40px -20px rgba(0,0,0,0.05);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
+        @keyframes move { 0% { transform: translate(0, 0) scale(1) rotate(0deg); } 33% { transform: translate(100px, 50px) scale(1.1) rotate(90deg); } 66% { transform: translate(-50px, 150px) scale(0.9) rotate(180deg); } 100% { transform: translate(0, 0) scale(1) rotate(360deg); } }
+        .card { border-radius: 2.5rem; backdrop-filter: blur(20px); box-shadow: 0 20px 40px -20px rgba(0,0,0,0.05); transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .card:hover { transform: translateY(-4px); box-shadow: 0 30px 60px -20px rgba(0,0,0,0.08); }
-
-        .input { 
-            width: 100%; 
-            background: rgba(255,255,255,0.9); 
-            border: 1px solid rgba(0,0,0,0.08); 
-            border-radius: 1.25rem; 
-            padding: 1.1rem 1.5rem; 
-            color: #1a1a1a;
-            font-size: 14px; 
-            outline: none; 
-            transition: 0.3s; 
-        }
+        .input { width: 100%; background: rgba(255,255,255,0.9); border: 1px solid rgba(0,0,0,0.08); border-radius: 1.25rem; padding: 1.1rem 1.5rem; color: #1a1a1a; font-size: 14px; outline: none; transition: 0.3s; }
         .input:focus { border-color: #e11d48; background: white; box-shadow: 0 0 0 4px rgba(225,29,72,0.05); }
-
-        .label { 
-            font-size: 9px; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            color: rgba(0,0,0,0.4); 
-            margin-left: 1.2rem; 
-            display: block; 
-            letter-spacing: 0.1em; 
-        }
-
-        .tag { 
-            font-size: 8px; 
-            font-weight: 900; 
-            text-transform: uppercase; 
-            background: rgba(225, 29, 72, 0.08); 
-            color: #e11d48; 
-            padding: 5px 14px; 
-            border-radius: 99px; 
-            letter-spacing: 0.05em; 
-        }
-
+        .label { font-size: 9px; font-weight: 800; text-transform: uppercase; color: rgba(0,0,0,0.4); margin-left: 1.2rem; display: block; letter-spacing: 0.1em; }
+        .tag { font-size: 8px; font-weight: 900; text-transform: uppercase; background: rgba(225, 29, 72, 0.08); color: #e11d48; padding: 5px 14px; border-radius: 99px; letter-spacing: 0.05em; }
         .animate-slide-up { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #fff7ed; }
-        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
-
         #recaptcha-element { transform: scale(0.85); transform-origin: center; min-height: 78px; }
         @media (min-width: 400px) { #recaptcha-element { transform: scale(1); } }
     </style>
 </head>
-<body>
-    <div id="root"></div>
-</body>
+<body><div id="root"></div></body>
 </html>
