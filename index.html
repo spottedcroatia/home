@@ -69,23 +69,24 @@
         }
 
         function getTimeStyles(ts) {
-            if (!ts) return "background: linear-gradient(to bottom right, #ffffff, #fff1f2); border-color: rgba(0,0,0,0.05);";
-            const hour = new Date(ts.seconds * 1000).getHours();
+            // Ako nema timestampa (npr. tek objavljeno), koristi trenutno vrijeme uređaja
+            const date = ts ? new Date(ts.seconds * 1000) : new Date();
+            const hour = date.getHours();
             
-            // Jutro (5h - 10h): Topla narančasta
-            if (hour >= 5 && hour < 10) 
-                return "background: linear-gradient(to bottom right, #fff7ed, #ffedd5); border-color: #fed7aa;";
+            // Jutro (5h - 11h): Topla jutarnja narančasta
+            if (hour >= 5 && hour < 11) 
+                return "background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%) !important; border: 1px solid #fed7aa !important;";
             
-            // Dan (10h - 17h): Svijetlo plava
-            if (hour >= 10 && hour < 17) 
-                return "background: linear-gradient(to bottom right, #f0f9ff, #ffffff); border-color: #bae6fd;";
+            // Dan (11h - 18h): Vedro plava
+            if (hour >= 11 && hour < 18) 
+                return "background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%) !important; border: 1px solid #bae6fd !important;";
             
-            // Večer (17h - 21h): Ljubičasta/Indigo
-            if (hour >= 17 && hour < 21) 
-                return "background: linear-gradient(to bottom right, #f5f3ff, #ede9fe); border-color: #ddd6fe;";
+            // Večer (18h - 22h): Sumrak ljubičasta
+            if (hour >= 18 && hour < 22) 
+                return "background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%) !important; border: 1px solid #ddd6fe !important;";
             
-            // Noć (21h - 5h): Tamnija siva/plava
-            return "background: linear-gradient(to bottom right, #f8fafc, #f1f5f9); border-color: #e2e8f0;";
+            // Noć (22h - 5h): Mirna sivo-plava
+            return "background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important; border: 1px solid #e2e8f0 !important;";
         }
 
         function formatDate(ts) {
@@ -98,9 +99,9 @@
             const container = document.getElementById('feed');
             if (!container) return;
             container.innerHTML = posts.map(p => {
-                const timeStyles = getTimeStyles(p.timestamp);
+                const styleString = getTimeStyles(p.timestamp);
                 return `
-                <div class="card p-7 mb-6 animate-slide-up relative" style="${timeStyles}">
+                <div class="card p-7 mb-6 animate-slide-up relative" style="${styleString}">
                     ${isAdmin ? `<button onclick="deletePost('${p.id}')" class="absolute top-4 right-4 bg-rose-600/10 hover:bg-rose-600 hover:text-white text-rose-600 text-[8px] font-black p-2 rounded-lg transition-all">OBRIŠI</button>` : ''}
                     <div class="flex justify-between items-center mb-6">
                         <div class="flex flex-wrap gap-2">
@@ -341,9 +342,10 @@
         }
 
         .card { 
-            border: 1px solid rgba(0, 0, 0, 0.03);
             border-radius: 2.5rem; 
             backdrop-filter: blur(20px);
+            /* Osnovni stil ako JS ne stigne učitati boju odmah */
+            background: rgba(255, 255, 255, 0.7);
             box-shadow: 0 20px 40px -20px rgba(0,0,0,0.05);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
