@@ -14,7 +14,7 @@
     
     <link rel="icon" href="https://fav.farm/❤️">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
     
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
@@ -45,6 +45,7 @@
         let isAdmin = false;
         let allPostsCached = [];
         let activeFilter = null;
+        let captchaWidgetId = null; // Spremanje ID-a captcha widgeta
 
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
@@ -139,14 +140,29 @@
         window.toggleForm = () => {
             const f = document.getElementById('form-container');
             const b = document.getElementById('toggle-btn');
+            const isHidden = f.classList.contains('hidden');
+            
             f.classList.toggle('hidden');
-            b.innerText = f.classList.contains('hidden') ? "Objavi" : "Zatvori";
+            b.innerText = isHidden ? "Zatvori" : "Objavi";
+
+            // Ako otvaramo formu i captcha još nije renderirana
+            if (isHidden && typeof grecaptcha !== 'undefined') {
+                setTimeout(() => {
+                    const captchaElement = document.getElementById('recaptcha-element');
+                    if (captchaElement && captchaElement.innerHTML === "") {
+                        captchaWidgetId = grecaptcha.render('recaptcha-element', {
+                            'sitekey': '6Legi88sAAAAAOJj1zvesrRPas1wutu4-LQ6BRp9',
+                            'theme': 'dark'
+                        });
+                    }
+                }, 100);
+            }
         };
 
         window.handlePostSubmit = async (e) => {
             e.preventDefault();
             
-            const captchaResponse = grecaptcha.getResponse();
+            const captchaResponse = grecaptcha.getResponse(captchaWidgetId);
             if (!captchaResponse) {
                 notify("Molimo potvrdite da niste robot.");
                 return;
@@ -167,7 +183,7 @@
                     uid: currentUser.uid
                 });
                 e.target.reset();
-                grecaptcha.reset();
+                grecaptcha.reset(captchaWidgetId);
                 notify("Poslano na pregled! ✨");
                 window.toggleForm();
             } catch (err) { 
@@ -235,7 +251,7 @@
                                         <div class="space-y-2"><label class="label">Tvoj kontakt (opcionalno)</label><input id="txt-contact" type="text" placeholder="@instagram ili broj" class="input"></div>
                                         
                                         <div class="flex justify-center py-2">
-                                            <div class="g-recaptcha" data-sitekey="6Legi88sAAAAAOJj1zvesrRPas1wutu4-LQ6BRp9" data-theme="dark"></div>
+                                            <div id="recaptcha-element"></div>
                                         </div>
 
                                         <button type="submit" class="w-full bg-rose-600 text-white font-black py-4 rounded-full uppercase tracking-widest text-[10px] hover:bg-rose-500 transition-all">Pošalji na pregled</button>
@@ -338,8 +354,9 @@
         ::-webkit-scrollbar-track { background: #050505; }
         ::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
 
-        /* reCAPTCHA style adjustment */
-        .g-recaptcha { transform: scale(0.9); transform-origin: center; }
+        /* reCAPTCHA skaliranje za mobilne uređaje */
+        #recaptcha-element { transform: scale(0.85); transform-origin: center; min-height: 78px; }
+        @media (min-width: 400px) { #recaptcha-element { transform: scale(1); } }
     </style>
 </head>
 <body>
