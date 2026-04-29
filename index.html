@@ -69,16 +69,23 @@
         }
 
         function getTimeStyles(ts) {
-            if (!ts) return "from-white to-rose-50/30 border-black/5";
+            if (!ts) return "background: linear-gradient(to bottom right, #ffffff, #fff1f2); border-color: rgba(0,0,0,0.05);";
             const hour = new Date(ts.seconds * 1000).getHours();
-            // Jutro (5h - 10h)
-            if (hour >= 5 && hour < 10) return "from-orange-100/60 to-rose-50/40 border-orange-200/50";
-            // Dan (10h - 17h)
-            if (hour >= 10 && hour < 17) return "from-blue-50/80 to-white border-blue-100/50";
-            // Večer (17h - 21h)
-            if (hour >= 17 && hour < 21) return "from-purple-100/50 to-indigo-50/30 border-purple-200/40";
-            // Noć (21h - 5h)
-            return "from-slate-800/5 to-slate-200/20 border-slate-300/30";
+            
+            // Jutro (5h - 10h): Topla narančasta
+            if (hour >= 5 && hour < 10) 
+                return "background: linear-gradient(to bottom right, #fff7ed, #ffedd5); border-color: #fed7aa;";
+            
+            // Dan (10h - 17h): Svijetlo plava
+            if (hour >= 10 && hour < 17) 
+                return "background: linear-gradient(to bottom right, #f0f9ff, #ffffff); border-color: #bae6fd;";
+            
+            // Večer (17h - 21h): Ljubičasta/Indigo
+            if (hour >= 17 && hour < 21) 
+                return "background: linear-gradient(to bottom right, #f5f3ff, #ede9fe); border-color: #ddd6fe;";
+            
+            // Noć (21h - 5h): Tamnija siva/plava
+            return "background: linear-gradient(to bottom right, #f8fafc, #f1f5f9); border-color: #e2e8f0;";
         }
 
         function formatDate(ts) {
@@ -93,7 +100,7 @@
             container.innerHTML = posts.map(p => {
                 const timeStyles = getTimeStyles(p.timestamp);
                 return `
-                <div class="card p-7 mb-6 animate-slide-up relative bg-gradient-to-br ${timeStyles}">
+                <div class="card p-7 mb-6 animate-slide-up relative" style="${timeStyles}">
                     ${isAdmin ? `<button onclick="deletePost('${p.id}')" class="absolute top-4 right-4 bg-rose-600/10 hover:bg-rose-600 hover:text-white text-rose-600 text-[8px] font-black p-2 rounded-lg transition-all">OBRIŠI</button>` : ''}
                     <div class="flex justify-between items-center mb-6">
                         <div class="flex flex-wrap gap-2">
@@ -337,7 +344,6 @@
             border: 1px solid rgba(0, 0, 0, 0.03);
             border-radius: 2.5rem; 
             backdrop-filter: blur(20px);
-            background: rgba(255, 255, 255, 0.7);
             box-shadow: 0 20px 40px -20px rgba(0,0,0,0.05);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
