@@ -6,11 +6,12 @@
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-5FQ7GTQQ');</script>
+    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Spotted Croatia | Pronađi osobu koja ti je zapela za oko!</title>
-    <meta name="description" content="Tražiš nekoga iz Zagreba, Splita, Rijeke ili Osijeka? Spotted Croatia ti pomaže pronaći tajanstvenu osobu koju si sreo/la u gradu ili kafiću.">
-    <meta name="keywords" content="spotted croatia, spotted zagreb, spotted split, upoznavanje, hrvatska, ljubav, kafići">
+    
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     
     <link rel="icon" href="https://fav.farm/❤️">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -144,9 +145,18 @@
 
         window.handlePostSubmit = async (e) => {
             e.preventDefault();
+
+            // Provjera reCAPTCHA
+            const captchaResponse = grecaptcha.getResponse();
+            if (!captchaResponse) {
+                notify("Molimo potvrdite da niste robot!");
+                return;
+            }
+
             const btn = e.target.querySelector('button');
             btn.disabled = true;
             btn.innerText = "Slanje...";
+            
             try {
                 await addDoc(getCollectionRef(), {
                     text: document.getElementById('txt-desc').value,
@@ -157,10 +167,14 @@
                     timestamp: serverTimestamp(),
                     uid: currentUser.uid
                 });
+                
                 e.target.reset();
+                grecaptcha.reset(); // Resetiraj captchu nakon slanja
                 notify("Poslano na pregled! ✨");
                 window.toggleForm();
-            } catch (err) { notify("Greška pri slanju."); } finally { 
+            } catch (err) { 
+                notify("Greška pri slanju."); 
+            } finally { 
                 btn.disabled = false; 
                 btn.innerText = "Pošalji na pregled";
             }
@@ -192,7 +206,7 @@
             `).join('') || '<p class="text-center text-white/10 text-[10px] py-4 uppercase">Nema novih zahtjeva</p>';
         }
 
-        function renderUI() {
+        window.renderUI = () => {
             document.getElementById('root').innerHTML = `
                 <div class="min-h-screen relative overflow-x-hidden text-white pb-20">
                     <div class="gradient-bg"></div>
@@ -221,6 +235,11 @@
                                             <div class="space-y-2"><label class="label">Gdje točno?</label><input id="txt-loc" type="text" placeholder="Kafić, trg..." class="input" required></div>
                                         </div>
                                         <div class="space-y-2"><label class="label">Tvoj kontakt (opcionalno)</label><input id="txt-contact" type="text" placeholder="@instagram ili broj" class="input"></div>
+                                        
+                                        <div class="flex justify-center py-2">
+                                            <div class="g-recaptcha" data-sitekey="6Legi88sAAAAAOJj1zvesrRPas1wutu4-LQ6BRp9" data-theme="dark"></div>
+                                        </div>
+
                                         <button type="submit" class="w-full bg-rose-600 text-white font-black py-4 rounded-full uppercase tracking-widest text-[10px] hover:bg-rose-500 transition-all">Pošalji na pregled</button>
                                     </form>
                                 </div>
@@ -282,14 +301,9 @@
             margin: 0;
         }
 
-        /* --- MORPHING GRADIENT STYLE --- */
         .gradient-bg {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
+            top: 0; left: 0; width: 100%; height: 100%; z-index: 0;
             background: linear-gradient(125deg, #050505, #0a0a0f, #1a0a0a, #050505);
             background-size: 400% 400%;
             animation: gradientMove 15s ease infinite;
@@ -306,10 +320,9 @@
             border-radius: 2rem; 
             backdrop-filter: blur(20px); 
             transition: transform 0.3s ease, border-color 0.3s ease;
+            border-color: rgba(255,255,255,0.05);
         }
-        .card:hover {
-            transform: translateY(-4px);
-        }
+        .card:hover { transform: translateY(-4px); }
         .input { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.25rem; padding: 1.1rem 1.5rem; color: white; font-size: 14px; outline: none; transition: 0.3s; }
         .input:focus { border-color: #e11d48; background: rgba(255,255,255,0.07); }
         .label { font-size: 9px; font-weight: 800; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-left: 1.2rem; display: block; letter-spacing: 0.1em; }
@@ -317,6 +330,10 @@
         .animate-slide-up { animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         
+        /* Centriranje Captche na mobitelu */
+        .g-recaptcha { transform: scale(0.9); transform-origin: center; }
+        @media (max-width: 400px) { .g-recaptcha { transform: scale(0.75); } }
+
         select option { background: #111; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #050505; }
