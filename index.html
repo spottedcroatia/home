@@ -98,11 +98,11 @@
                                 📍 ${p.grad}
                             </button>
                         </div>
-                        <span class="text-[9px] text-white/40 font-mono">${formatDate(p.timestamp)}</span>
+                        <span class="text-[9px] text-gray-500 font-mono">${formatDate(p.timestamp)}</span>
                     </div>
-                    <p class="text-white/95 font-medium text-lg leading-relaxed mb-8">"${p.text}"</p>
+                    <p class="text-gray-900 font-medium text-lg leading-relaxed mb-8">"${p.text}"</p>
                     <div class="flex flex-wrap gap-5 pt-5 border-t border-white/5 items-center">
-                        <div class="flex items-center text-[10px] text-white/50 uppercase tracking-widest font-bold">
+                        <div class="flex items-center text-[10px] text-gray-600 uppercase tracking-widest font-bold">
                             <span class="w-1.5 h-1.5 bg-rose-500 rounded-full mr-2 shadow-[0_0_8px_rgba(244,63,94,0.6)]"></span>
                             ${p.location}
                         </div>
@@ -222,17 +222,18 @@
 
         function renderUI() {
             document.getElementById('root').innerHTML = `
-                <div class="min-h-screen relative overflow-x-hidden text-white pb-20">
-                    <div class="bg-container">
-    <div class="blob"></div>
+                <div class="gradient-bg">
+    <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
 </div>
+<div class="min-h-screen relative overflow-x-hidden pb-20">
                     
-                    <nav class="fixed top-0 inset-x-0 h-16 bg-black/40 backdrop-blur-3xl border-b border-white/5 z-50 flex items-center">
+                    <nav class="fixed top-0 inset-x-0 h-16 bg-white/60 backdrop-blur-3xl border-b border-black/5 z-50 flex items-center">
                         <div class="max-w-xl mx-auto px-6 w-full flex justify-between items-center">
-                            <h1 onclick="triggerAdminLogin()" class="text-lg font-black tracking-tighter cursor-pointer">
-                                SPOTTED<span class="text-rose-600">.</span>hr
-                            </h1>
+                            <h1 onclick="triggerAdminLogin()" class="text-lg font-black tracking-tighter cursor-pointer text-gray-900">
+    SPOTTED<span class="text-rose-600">.</span>hr
+</h1>
                             <div class="flex items-center gap-2">
                                 <span class="text-[8px] font-bold text-emerald-500 uppercase tracking-widest">Live</span>
                                 <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_#10b981]"></div>
@@ -318,17 +319,13 @@
             margin: 0;
         }
 
-        .gradient-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            background: linear-gradient(125deg, #050505, #0a0a0f, #1a0a0a, #050505);
-            background-size: 400% 400%;
-            animation: gradientMove 15s ease infinite;
-        }
+.gradient-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1; /* Mora biti iza svega */
+    background: #fff7ed;
+    overflow: hidden;
+}
 
         @keyframes gradientMove {
             0% { background-position: 0% 50%; }
@@ -336,37 +333,36 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* DINAMIČNI MORPHING GRADIENT POZADINA */
-        .bg-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 0;
-            background: #000;
-            overflow: hidden;
-        }
 
-        .blob {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            background: linear-gradient(135deg, rgba(225, 29, 72, 0.25) 0%, rgba(79, 70, 229, 0.25) 100%);
-            filter: blur(80px);
-            border-radius: 50%;
-            animation: morph 20s infinite alternate ease-in-out;
-        }
+       .blob {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    filter: blur(80px);
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: move 20s infinite alternate ease-in-out;
+}
+.blob-1 { top: -10%; left: -10%; background: #fb7185; }
+.blob-2 { bottom: -10%; right: -10%; background: #38bdf8; animation-delay: -5s; }
+.blob-3 { top: 40%; left: 30%; background: #fbbf24; animation-delay: -10s; }
 
-        .blob-2 {
-            right: -10%;
-            top: -10%;
-            width: 500px;
-            height: 500px;
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(59, 130, 246, 0.2) 100%);
-            animation-duration: 25s;
-            animation-delay: -5s;
-        }
+@keyframes move {
+    0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+    33% { transform: translate(100px, 50px) scale(1.2) rotate(90deg); }
+    66% { transform: translate(-50px, 150px) scale(0.8) rotate(180deg); }
+    100% { transform: translate(0, 0) scale(1) rotate(360deg); }
+}
+
+body { 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    background: #fff7ed; 
+    color: #1a1a1a; 
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
 
         @keyframes morph {
             0% { transform: translate(0, 0) scale(1) rotate(0deg); border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
@@ -375,17 +371,30 @@
             100% { transform: translate(0, 0) scale(1) rotate(360deg); border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
         }
 
-       .card { 
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 2rem; 
-            backdrop-filter: blur(20px); /* Ovo "zamuti" pozadinu iza kartice */
-            background: rgba(255, 255, 255, 0.02); 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+   .card { 
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 2rem; 
+    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.6); /* Svijetla staklena pozadina */
+    box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    color: #1a1a1a; /* Osigurava tamni tekst unutar kartice */
+}
         .card:hover {
             transform: translateY(-4px);
         }
-        .input { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 1.25rem; padding: 1.1rem 1.5rem; color: white; font-size: 14px; outline: none; transition: 0.3s; }
+        .input { 
+    width: 100%; 
+    background: rgba(255,255,255,0.8); 
+    border: 1px solid rgba(0,0,0,0.1); 
+    border-radius: 1.25rem; 
+    padding: 1.1rem 1.5rem; 
+    color: #1a1a1a; /* Tamni tekst dok pišeš */
+    font-size: 14px; 
+    outline: none; 
+    transition: 0.3s; 
+}
+.input::placeholder { color: rgba(0,0,0,0.4); }
         .input:focus { border-color: #e11d48; background: rgba(255,255,255,0.07); }
         .label { font-size: 9px; font-weight: 800; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-left: 1.2rem; display: block; letter-spacing: 0.1em; }
         .tag { font-size: 8px; font-weight: 900; text-transform: uppercase; background: rgba(225, 29, 72, 0.15); color: #fb7185; padding: 5px 14px; border-radius: 99px; width: fit-content; letter-spacing: 0.05em; }
