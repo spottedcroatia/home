@@ -89,30 +89,30 @@
             container.innerHTML = posts.map(p => {
                 const timeStyles = getTimeStyles(p.timestamp);
                 return `
-                <div class="card p-6 md:p-8 mb-6 animate-slide-up relative bg-gradient-to-br ${timeStyles}">
+                <div class="card p-5 md:p-8 mb-4 md:mb-6 animate-slide-up relative bg-gradient-to-br ${timeStyles}">
                     ${isAdmin ? `<button onclick="deletePost('${p.id}')" class="absolute -top-2 -right-2 bg-rose-600 text-white text-[11px] font-black w-8 h-8 rounded-full z-20 border-2 border-black shadow-lg">X</button>` : ''}
                     
-                    <div class="flex items-center justify-between gap-3 mb-5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
                         <div class="flex items-center gap-2 min-w-0">
-                            <button onclick="setFilter('${p.grad}')" class="shrink-0 bg-white/10 hover:bg-rose-600 border border-white/10 px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-widest transition-all">
+                            <button onclick="setFilter('${p.grad}')" class="shrink-0 bg-white/10 hover:bg-rose-600 border border-white/10 px-2.5 py-1 rounded-lg text-[9px] md:text-[10px] font-extrabold uppercase tracking-widest transition-all">
                                 ${p.grad}
                             </button>
-                            <span class="text-white/60 font-semibold text-[12px] uppercase tracking-wide truncate">
+                            <span class="text-white/60 font-semibold text-[11px] md:text-[12px] uppercase tracking-wide truncate">
                                 @ ${p.location}
                             </span>
                         </div>
-                        <span class="shrink-0 bg-white/5 text-white/90 px-3 py-1 rounded-full text-[10px] font-bold font-mono border border-white/10">
+                        <span class="w-fit shrink-0 bg-white/5 text-white/90 px-3 py-1 rounded-full text-[9px] md:text-[10px] font-bold font-mono border border-white/10">
                             ${formatDate(p.timestamp)}
                         </span>
                     </div>
 
-                    <div class="text-white/95 font-medium text-[17px] md:text-[19px] leading-relaxed break-words text-left">
+                    <div class="text-white/95 font-medium text-[15px] md:text-[19px] leading-relaxed break-words text-left">
                         ${p.text.trim()}
                     </div>
                     
                     ${p.contact ? `
                         <div class="mt-6 pt-5 border-t border-white/10 flex items-center text-[12px] text-emerald-400 font-bold tracking-wide">
-                            <svg class="shrink-0 w-4 h-4 mr-2.5 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            <svg class="hidden md:block shrink-0 w-4 h-4 mr-2.5 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                             <span class="truncate break-all">${p.contact}</span>
                         </div>
                     ` : ''}
@@ -120,7 +120,6 @@
             }).join('') || `<div class="text-center py-20 text-white/20 text-sm font-bold uppercase tracking-widest">Nema novih objava</div>`;
         }
 
-        // --- Core Functions (Logic) ---
         window.updateDisplay = () => {
             const approved = allPostsCached.filter(p => p.status === 'approved');
             const pending = allPostsCached.filter(p => p.status === 'pending');
@@ -217,7 +216,7 @@
                         ${isAdmin ? `<section class="card p-6 mb-10 border-rose-500/30 bg-rose-500/10 shadow-2xl"><h2 class="text-xs font-black uppercase tracking-[0.3em] mb-4 text-rose-500">Moderacija</h2><div id="admin-queue"></div></section>` : `
                             <div class="flex flex-col items-center mb-12">
                                 <button id="toggle-btn" onclick="toggleForm()" class="bg-white text-black font-extrabold py-4 px-14 rounded-full uppercase tracking-[0.2em] text-[11px] shadow-2xl hover:scale-105 active:scale-95 transition-all">Objavi oglas</button>
-                                <div id="form-container" class="hidden w-full mt-6 card p-8 border-white/10 bg-black/90 shadow-2xl">
+                                <div id="form-container" class="hidden w-full mt-6 card p-6 md:p-8 border-white/10 bg-black/90 shadow-2xl">
                                     <form onsubmit="handlePostSubmit(event)" class="space-y-6">
                                         <div class="space-y-2"><label class="text-[10px] font-black uppercase text-white/40 ml-2">Opis osobe/situacije</label><textarea id="txt-desc" placeholder="Tko ti je zapeo za oko?" class="input min-h-[140px]" required></textarea></div>
                                         <div class="grid grid-cols-2 gap-4">
