@@ -89,35 +89,42 @@
             container.innerHTML = posts.map(p => {
                 const timeStyles = getTimeStyles(p.timestamp);
                 return `
-                <div class="card p-5 md:p-8 mb-4 md:mb-6 animate-slide-up relative bg-gradient-to-br ${timeStyles}">
+                <div class="card p-6 md:p-9 mb-6 animate-slide-up relative bg-gradient-to-br ${timeStyles}">
                     ${isAdmin ? `<button onclick="deletePost('${p.id}')" class="absolute -top-2 -right-2 bg-rose-600 text-white text-[11px] font-black w-8 h-8 rounded-full z-20 border-2 border-black shadow-lg">X</button>` : ''}
                     
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
-                        <div class="flex items-center gap-2 min-w-0">
-                            <button onclick="setFilter('${p.grad}')" class="shrink-0 bg-white/10 hover:bg-rose-600 border border-white/10 px-2.5 py-1 rounded-lg text-[9px] md:text-[10px] font-extrabold uppercase tracking-widest transition-all">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                        <div class="flex items-center gap-3 min-w-0">
+                            <button onclick="setFilter('${p.grad}')" class="shrink-0 bg-white/10 hover:bg-rose-600 border border-white/10 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-[0.15em] transition-all text-white/90">
                                 ${p.grad}
                             </button>
-                            <span class="text-white/60 font-semibold text-[11px] md:text-[12px] uppercase tracking-wide truncate">
+                            <span class="text-white/40 font-bold text-[11px] md:text-[13px] uppercase tracking-wider truncate italic">
                                 @ ${p.location}
                             </span>
                         </div>
-                        <span class="w-fit shrink-0 bg-white/5 text-white/90 px-3 py-1 rounded-full text-[9px] md:text-[10px] font-bold font-mono border border-white/10">
+                        <span class="w-fit shrink-0 bg-white/5 text-white/50 px-3 py-1 rounded-md text-[10px] font-mono border border-white/5">
                             ${formatDate(p.timestamp)}
                         </span>
                     </div>
 
-                    <div class="text-white/95 font-medium text-[15px] md:text-[19px] leading-relaxed break-words text-left">
-                        ${p.text.trim()}
+                    <div class="relative pl-4 border-l-2 border-rose-500/30">
+                        <div class="text-white/90 font-medium text-[16px] md:text-[20px] leading-[1.6] tracking-tight break-words text-left">
+                            ${p.text.trim()}
+                        </div>
                     </div>
                     
                     ${p.contact ? `
-                        <div class="mt-6 pt-5 border-t border-white/10 flex items-center text-[12px] text-emerald-400 font-bold tracking-wide">
-                            <svg class="hidden md:block shrink-0 w-4 h-4 mr-2.5 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                            <span class="truncate break-all">${p.contact}</span>
+                        <div class="mt-8 pt-6 border-t border-white/5 flex items-center group">
+                            <div class="bg-emerald-500/10 p-2 rounded-lg mr-3 hidden md:block">
+                                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-[9px] uppercase font-black tracking-widest text-white/30 mb-0.5">Kontakt</span>
+                                <span class="text-[13px] text-emerald-400 font-bold tracking-wide break-all">${p.contact}</span>
+                            </div>
                         </div>
                     ` : ''}
                 </div>`;
-            }).join('') || `<div class="text-center py-20 text-white/20 text-sm font-bold uppercase tracking-widest">Nema novih objava</div>`;
+            }).join('') || `<div class="text-center py-24 text-white/10 text-xs font-black uppercase tracking-[0.5em]">Nema novih objava</div>`;
         }
 
         window.updateDisplay = () => {
@@ -236,7 +243,7 @@
                             <div id="active-filter-info"></div>
                             <div class="h-[1px] bg-white/20 flex-1"></div>
                         </div>
-                        <div id="feed" class="space-y-4"></div>
+                        <div id="feed" class="space-y-6 md:space-y-8"></div>
                     </main>
                     <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-white text-black px-10 py-4 rounded-full text-xs font-black uppercase tracking-widest opacity-0 translate-y-5 transition-all duration-300 z-[100] shadow-2xl"></div>
                 </div>`;
@@ -263,7 +270,7 @@
     </script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
         body { 
             font-family: 'Inter', sans-serif; 
@@ -282,33 +289,38 @@
         
         .card { 
             border-width: 1px; 
-            border-radius: 1.75rem; 
-            border-color: rgba(255,255,255,0.12); 
-            backdrop-filter: blur(15px); 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
+            border-radius: 2rem; 
+            border-color: rgba(255,255,255,0.08); 
+            backdrop-filter: blur(20px); 
+            transition: transform 0.3s ease, box-shadow 0.3s ease; 
+            box-shadow: 0 20px 50px -12px rgba(0,0,0,0.7);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255,255,255,0.15);
         }
         
         .input { 
             width: 100%; 
-            background: rgba(255,255,255,0.05); 
+            background: rgba(255,255,255,0.03); 
             border: 1px solid rgba(255,255,255,0.1); 
             border-radius: 1.25rem; 
-            padding: 1rem 1.25rem; 
+            padding: 1.1rem 1.4rem; 
             color: white; 
             font-size: 15px; 
             outline: none; 
             transition: 0.2s; 
         }
         
-        .input:focus { border-color: #e11d48; background: rgba(255,255,255,0.08); }
+        .input:focus { border-color: #e11d48; background: rgba(255,255,255,0.07); }
         
         .animate-slide-up { 
-            animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
+            animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
         }
         
         @keyframes slideUp { 
-            from { opacity: 0; transform: translateY(30px); } 
+            from { opacity: 0; transform: translateY(40px); } 
             to { opacity: 1; transform: translateY(0); } 
         }
         
