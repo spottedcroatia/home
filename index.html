@@ -90,8 +90,6 @@
                 const timeStyles = getTimeStyles(p.timestamp);
                 return `
                 <div class="card p-6 md:p-8 mb-6 animate-slide-up relative bg-gradient-to-br ${timeStyles}">
-                    ${isAdmin ? `<button onclick="deletePost('${p.id}')" class="absolute -top-2 -right-2 bg-rose-600 text-white text-[11px] font-black w-8 h-8 rounded-full z-20 border-2 border-black shadow-lg">X</button>` : ''}
-                    
                     <div class="flex items-center justify-between gap-3 mb-5">
                         <div class="flex items-center gap-2 min-w-0">
                             <button onclick="setFilter('${p.grad}')" class="shrink-0 bg-white/10 hover:bg-rose-600 border border-white/10 px-3 py-1 rounded-lg text-[10px] font-extrabold uppercase tracking-widest transition-all">
@@ -112,7 +110,7 @@
                     
                     ${p.contact ? `
                         <div class="mt-6 pt-5 border-t border-white/10 flex items-center text-[12px] text-emerald-400 font-bold tracking-wide">
-                            <svg class="shrink-0 w-4 h-4 mr-2.5 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            <svg class="hidden md:block shrink-0 w-4 h-4 mr-2.5 opacity-90" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                             <span class="truncate break-all">${p.contact}</span>
                         </div>
                     ` : ''}
@@ -120,7 +118,6 @@
             }).join('') || `<div class="text-center py-20 text-white/20 text-sm font-bold uppercase tracking-widest">Nema novih objava</div>`;
         }
 
-        // --- Core Functions (Logic) ---
         window.updateDisplay = () => {
             const approved = allPostsCached.filter(p => p.status === 'approved');
             const pending = allPostsCached.filter(p => p.status === 'pending');
@@ -173,8 +170,8 @@
                     uid: currentUser.uid
                 });
                 e.target.reset(); grecaptcha.reset(captchaWidgetId);
-                notify("Poslano na pregled! ✨"); window.toggleForm();
-            } catch (err) { notify("Došlo je do greške."); } finally { btn.disabled = false; btn.innerText = "Pošalji"; }
+                notify("Poslano! ✨"); window.toggleForm();
+            } catch (err) { notify("Greška."); } finally { btn.disabled = false; btn.innerText = "Pošalji"; }
         };
 
         window.deletePost = async (id) => {
@@ -183,7 +180,7 @@
 
         window.approvePost = async (id) => {
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'posts', id), { status: 'approved' });
-            notify("Objava odobrena.");
+            notify("Odobreno.");
         };
 
         function renderAdminPanel(pending) {
@@ -193,7 +190,7 @@
                 <div class="bg-white/5 p-4 rounded-2xl mb-3 border border-rose-500/20 text-sm">
                     <p class="mb-4 opacity-90 leading-relaxed italic">"${p.text}"</p>
                     <div class="flex gap-3">
-                        <button onclick="approvePost('${p.id}')" class="flex-1 bg-emerald-600 py-3 rounded-xl font-black uppercase text-[11px] tracking-wider">Odobri</button>
+                        <button onclick="approvePost('${p.id}')" class="flex-1 bg-emerald-600 py-3 rounded-xl font-black uppercase text-[11px]">Odobri</button>
                         <button onclick="deletePost('${p.id}')" class="bg-rose-600 px-6 py-3 rounded-xl font-black">X</button>
                     </div>
                 </div>
@@ -208,7 +205,7 @@
                         <div class="max-w-2xl mx-auto px-6 w-full flex justify-between items-center">
                             <h1 onclick="triggerAdminLogin()" class="text-xl font-black tracking-tighter cursor-pointer">SPOTTED<span class="text-rose-600">.</span>HR</h1>
                             <div class="flex items-center gap-2">
-                                <span class="text-[9px] font-black uppercase text-emerald-400 tracking-tighter">Live Feed</span>
+                                <span class="text-[9px] font-black uppercase text-emerald-400">Live</span>
                                 <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_12px_#10b981]"></div>
                             </div>
                         </div>
@@ -219,14 +216,14 @@
                                 <button id="toggle-btn" onclick="toggleForm()" class="bg-white text-black font-extrabold py-4 px-14 rounded-full uppercase tracking-[0.2em] text-[11px] shadow-2xl hover:scale-105 active:scale-95 transition-all">Objavi oglas</button>
                                 <div id="form-container" class="hidden w-full mt-6 card p-8 border-white/10 bg-black/90 shadow-2xl">
                                     <form onsubmit="handlePostSubmit(event)" class="space-y-6">
-                                        <div class="space-y-2"><label class="text-[10px] font-black uppercase text-white/40 ml-2">Opis osobe/situacije</label><textarea id="txt-desc" placeholder="Tko ti je zapeo za oko?" class="input min-h-[140px]" required></textarea></div>
+                                        <textarea id="txt-desc" placeholder="Tko ti je zapeo za oko?" class="input min-h-[140px]" required></textarea>
                                         <div class="grid grid-cols-2 gap-4">
-                                            <div class="space-y-2"><label class="text-[10px] font-black uppercase text-white/40 ml-2">Grad</label><select id="sel-grad" class="input">${GRADOVI.map(g => `<option value="${g}">${g}</option>`).join('')}</select></div>
-                                            <div class="space-y-2"><label class="text-[10px] font-black uppercase text-white/40 ml-2">Točna lokacija</label><input id="txt-loc" type="text" placeholder="Npr. Cvjetni trg..." class="input" required></div>
+                                            <select id="sel-grad" class="input">${GRADOVI.map(g => `<option value="${g}">${g}</option>`).join('')}</select>
+                                            <input id="txt-loc" type="text" placeholder="Gdje?" class="input" required>
                                         </div>
-                                        <div class="space-y-2"><label class="text-[10px] font-black uppercase text-white/40 ml-2">Tvoj kontakt (opcionalno)</label><input id="txt-contact" type="text" placeholder="@instagram ili broj" class="input"></div>
+                                        <input id="txt-contact" type="text" placeholder="Kontakt" class="input">
                                         <div class="flex justify-center py-2"><div id="recaptcha-element"></div></div>
-                                        <button type="submit" class="w-full bg-rose-600 py-4 rounded-2xl font-black text-[13px] uppercase tracking-[0.2em] shadow-lg hover:bg-rose-500 transition-colors">Objavi anonimno</button>
+                                        <button type="submit" class="w-full bg-rose-600 py-4 rounded-2xl font-black text-[13px] uppercase tracking-[0.2em]">Objavi</button>
                                     </form>
                                 </div>
                             </div>
@@ -265,54 +262,13 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap');
-        
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: #020203; 
-            margin: 0; 
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-        
-        .gradient-bg { 
-            position: fixed; 
-            top: 0; left: 0; width: 100%; height: 100%; 
-            z-index: 0; 
-            background: radial-gradient(circle at 50% 0%, #1a1a3a 0%, #020203 80%); 
-        }
-        
-        .card { 
-            border-width: 1px; 
-            border-radius: 1.75rem; 
-            border-color: rgba(255,255,255,0.12); 
-            backdrop-filter: blur(15px); 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
-        }
-        
-        .input { 
-            width: 100%; 
-            background: rgba(255,255,255,0.05); 
-            border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 1.25rem; 
-            padding: 1rem 1.25rem; 
-            color: white; 
-            font-size: 15px; 
-            outline: none; 
-            transition: 0.2s; 
-        }
-        
+        body { font-family: 'Inter', sans-serif; background: #020203; margin: 0; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        .gradient-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background: radial-gradient(circle at 50% 0%, #1a1a3a 0%, #020203 80%); }
+        .card { border-width: 1px; border-radius: 1.75rem; border-color: rgba(255,255,255,0.12); backdrop-filter: blur(15px); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5); }
+        .input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 1.25rem; padding: 1rem 1.25rem; color: white; font-size: 15px; outline: none; }
         .input:focus { border-color: #e11d48; background: rgba(255,255,255,0.08); }
-        
-        .animate-slide-up { 
-            animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; 
-        }
-        
-        @keyframes slideUp { 
-            from { opacity: 0; transform: translateY(30px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
-        
+        .animate-slide-up { animation: slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         select option { background: #0a0a0a; color: white; }
     </style>
 </head>
