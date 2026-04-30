@@ -89,42 +89,35 @@
             container.innerHTML = posts.map(p => {
                 const timeStyles = getTimeStyles(p.timestamp);
                 return `
-                <div class="card p-6 md:p-9 mb-6 animate-slide-up relative bg-gradient-to-br ${timeStyles}">
-                    ${isAdmin ? `<button onclick="deletePost('${p.id}')" class="absolute -top-2 -right-2 bg-rose-600 text-white text-[11px] font-black w-8 h-8 rounded-full z-20 border-2 border-black shadow-lg">X</button>` : ''}
+                <div class="card p-5 mb-4 animate-slide-up relative bg-gradient-to-br ${timeStyles}">
+                    ${isAdmin ? `<button onclick="deletePost('${p.id}')" class="absolute -top-1 -right-1 bg-rose-600 text-white text-[10px] font-black w-7 h-7 rounded-full z-20 border-2 border-black shadow-lg">X</button>` : ''}
                     
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                        <div class="flex items-center gap-3 min-w-0">
-                            <button onclick="setFilter('${p.grad}')" class="shrink-0 bg-white/10 hover:bg-rose-600 border border-white/10 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-[0.15em] transition-all text-white/90">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-2 min-w-0">
+                            <button onclick="setFilter('${p.grad}')" class="shrink-0 bg-white/10 hover:bg-rose-600 border border-white/10 px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-wider transition-all text-white/90">
                                 ${p.grad}
                             </button>
-                            <span class="text-white/40 font-bold text-[11px] md:text-[13px] uppercase tracking-wider truncate italic">
+                            <span class="text-white/40 font-bold text-[10px] md:text-[11px] uppercase tracking-wide truncate italic">
                                 @ ${p.location}
                             </span>
                         </div>
-                        <span class="w-fit shrink-0 bg-white/5 text-white/50 px-3 py-1 rounded-md text-[10px] font-mono border border-white/5">
+                        <span class="w-fit shrink-0 bg-white/5 text-white/40 px-2 py-0.5 rounded text-[9px] font-mono border border-white/5">
                             ${formatDate(p.timestamp)}
                         </span>
                     </div>
 
-                    <div class="relative pl-4 border-l-2 border-rose-500/30">
-                        <div class="text-white/90 font-medium text-[16px] md:text-[20px] leading-[1.6] tracking-tight break-words text-left">
-                            ${p.text.trim()}
-                        </div>
-                    </div>
+                    <div class="text-white/90 font-medium text-[14px] md:text-[16px] leading-relaxed tracking-tight break-words text-left whitespace-pre-wrap p-0 m-0">${p.text.trim()}</div>
                     
                     ${p.contact ? `
-                        <div class="mt-8 pt-6 border-t border-white/5 flex items-center group">
-                            <div class="bg-emerald-500/10 p-2 rounded-lg mr-3 hidden md:block">
-                                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                            </div>
+                        <div class="mt-5 pt-4 border-t border-white/5 flex items-center">
                             <div class="flex flex-col">
-                                <span class="text-[9px] uppercase font-black tracking-widest text-white/30 mb-0.5">Kontakt</span>
-                                <span class="text-[13px] text-emerald-400 font-bold tracking-wide break-all">${p.contact}</span>
+                                <span class="text-[8px] uppercase font-black tracking-widest text-white/30">Kontakt</span>
+                                <span class="text-[12px] text-emerald-400 font-bold tracking-wide break-all">${p.contact}</span>
                             </div>
                         </div>
                     ` : ''}
                 </div>`;
-            }).join('') || `<div class="text-center py-24 text-white/10 text-xs font-black uppercase tracking-[0.5em]">Nema novih objava</div>`;
+            }).join('') || `<div class="text-center py-20 text-white/10 text-[10px] font-black uppercase tracking-[0.4em]">Nema novih objava</div>`;
         }
 
         window.updateDisplay = () => {
@@ -144,7 +137,7 @@
 
         function updateFilterUI() {
             const info = document.getElementById('active-filter-info');
-            if (info) info.innerHTML = activeFilter ? `<button onclick="setFilter(null)" class="ml-2 bg-rose-600 text-[10px] px-3 py-1 rounded-full font-black shadow-lg hover:scale-105 transition-transform">UKLONI ${activeFilter}</button>` : '';
+            if (info) info.innerHTML = activeFilter ? `<button onclick="setFilter(null)" class="ml-2 bg-rose-600 text-[9px] px-2 py-0.5 rounded-full font-black shadow-lg">UKLONI ${activeFilter}</button>` : '';
         }
 
         window.toggleForm = () => {
@@ -196,56 +189,55 @@
             const container = document.getElementById('admin-queue');
             if (!container) return;
             container.innerHTML = pending.map(p => `
-                <div class="bg-white/5 p-4 rounded-2xl mb-3 border border-rose-500/20 text-sm">
-                    <p class="mb-4 opacity-90 leading-relaxed italic">"${p.text}"</p>
-                    <div class="flex gap-3">
-                        <button onclick="approvePost('${p.id}')" class="flex-1 bg-emerald-600 py-3 rounded-xl font-black uppercase text-[11px] tracking-wider">Odobri</button>
-                        <button onclick="deletePost('${p.id}')" class="bg-rose-600 px-6 py-3 rounded-xl font-black">X</button>
+                <div class="bg-white/5 p-4 rounded-xl mb-2 border border-rose-500/20 text-xs">
+                    <p class="mb-3 opacity-90 italic">"${p.text}"</p>
+                    <div class="flex gap-2">
+                        <button onclick="approvePost('${p.id}')" class="flex-1 bg-emerald-600 py-2 rounded-lg font-black uppercase text-[10px]">Odobri</button>
+                        <button onclick="deletePost('${p.id}')" class="bg-rose-600 px-4 py-2 rounded-lg font-black">X</button>
                     </div>
                 </div>
-            `).join('') || '<p class="text-center text-[10px] opacity-30 py-4 font-bold">NEMA ČEKANJA</p>';
+            `).join('') || '<p class="text-center text-[9px] opacity-30 py-2 font-bold">NEMA ČEKANJA</p>';
         }
 
         function renderUI() {
             document.getElementById('root').innerHTML = `
-                <div class="min-h-screen text-white pb-24">
+                <div class="min-h-screen text-white pb-20">
                     <div class="gradient-bg"></div>
-                    <nav class="fixed top-0 inset-x-0 h-16 bg-black/80 backdrop-blur-2xl border-b border-white/10 z-50 flex items-center">
-                        <div class="max-w-2xl mx-auto px-6 w-full flex justify-between items-center">
-                            <h1 onclick="triggerAdminLogin()" class="text-xl font-black tracking-tighter cursor-pointer">SPOTTED<span class="text-rose-600">.</span>HR</h1>
+                    <nav class="fixed top-0 inset-x-0 h-14 bg-black/80 backdrop-blur-2xl border-b border-white/10 z-50 flex items-center">
+                        <div class="max-w-md mx-auto px-6 w-full flex justify-between items-center">
+                            <h1 onclick="triggerAdminLogin()" class="text-lg font-black tracking-tighter cursor-pointer">SPOTTED<span class="text-rose-600">.</span>HR</h1>
                             <div class="flex items-center gap-2">
-                                <span class="text-[9px] font-black uppercase text-emerald-400 tracking-tighter">Live Feed</span>
-                                <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_12px_#10b981]"></div>
+                                <div class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_#10b981]"></div>
                             </div>
                         </div>
                     </nav>
-                    <main class="relative max-w-2xl mx-auto px-4 pt-24 z-10">
-                        ${isAdmin ? `<section class="card p-6 mb-10 border-rose-500/30 bg-rose-500/10 shadow-2xl"><h2 class="text-xs font-black uppercase tracking-[0.3em] mb-4 text-rose-500">Moderacija</h2><div id="admin-queue"></div></section>` : `
-                            <div class="flex flex-col items-center mb-12">
-                                <button id="toggle-btn" onclick="toggleForm()" class="bg-white text-black font-extrabold py-4 px-14 rounded-full uppercase tracking-[0.2em] text-[11px] shadow-2xl hover:scale-105 active:scale-95 transition-all">Objavi oglas</button>
-                                <div id="form-container" class="hidden w-full mt-6 card p-6 md:p-8 border-white/10 bg-black/90 shadow-2xl">
-                                    <form onsubmit="handlePostSubmit(event)" class="space-y-6">
-                                        <div class="space-y-2"><label class="text-[10px] font-black uppercase text-white/40 ml-2">Opis osobe/situacije</label><textarea id="txt-desc" placeholder="Tko ti je zapeo za oko?" class="input min-h-[140px]" required></textarea></div>
-                                        <div class="grid grid-cols-2 gap-4">
-                                            <div class="space-y-2"><label class="text-[10px] font-black uppercase text-white/40 ml-2">Grad</label><select id="sel-grad" class="input">${GRADOVI.map(g => `<option value="${g}">${g}</option>`).join('')}</select></div>
-                                            <div class="space-y-2"><label class="text-[10px] font-black uppercase text-white/40 ml-2">Točna lokacija</label><input id="txt-loc" type="text" placeholder="Npr. Cvjetni trg..." class="input" required></div>
+                    <main class="relative max-w-md mx-auto px-4 pt-20 z-10">
+                        ${isAdmin ? `<section class="card p-5 mb-8 border-rose-500/30 bg-rose-500/10 shadow-2xl"><h2 class="text-[10px] font-black uppercase tracking-widest mb-3 text-rose-500">Moderacija</h2><div id="admin-queue"></div></section>` : `
+                            <div class="flex flex-col items-center mb-8">
+                                <button id="toggle-btn" onclick="toggleForm()" class="bg-white text-black font-extrabold py-3 px-10 rounded-full uppercase tracking-widest text-[10px] shadow-2xl hover:scale-105 active:scale-95 transition-all">Objavi oglas</button>
+                                <div id="form-container" class="hidden w-full mt-4 card p-5 border-white/10 bg-black/90 shadow-2xl">
+                                    <form onsubmit="handlePostSubmit(event)" class="space-y-4">
+                                        <div class="space-y-1.5"><label class="text-[9px] font-black uppercase text-white/40 ml-2">Opis</label><textarea id="txt-desc" placeholder="Tko ti je zapeo za oko?" class="input min-h-[120px]" required></textarea></div>
+                                        <div class="grid grid-cols-2 gap-3">
+                                            <div class="space-y-1.5"><label class="text-[9px] font-black uppercase text-white/40 ml-2">Grad</label><select id="sel-grad" class="input py-2 text-xs">${GRADOVI.map(g => `<option value="${g}">${g}</option>`).join('')}</select></div>
+                                            <div class="space-y-1.5"><label class="text-[9px] font-black uppercase text-white/40 ml-2">Lokacija</label><input id="txt-loc" type="text" placeholder="Gdje..." class="input py-2 text-xs" required></div>
                                         </div>
-                                        <div class="space-y-2"><label class="text-[10px] font-black uppercase text-white/40 ml-2">Tvoj kontakt (opcionalno)</label><input id="txt-contact" type="text" placeholder="@instagram ili broj" class="input"></div>
-                                        <div class="flex justify-center py-2"><div id="recaptcha-element"></div></div>
-                                        <button type="submit" class="w-full bg-rose-600 py-4 rounded-2xl font-black text-[13px] uppercase tracking-[0.2em] shadow-lg hover:bg-rose-500 transition-colors">Objavi anonimno</button>
+                                        <div class="space-y-1.5"><label class="text-[9px] font-black uppercase text-white/40 ml-2">Kontakt (opcionalno)</label><input id="txt-contact" type="text" placeholder="@instagram" class="input py-2 text-xs"></div>
+                                        <div class="flex justify-center scale-75"><div id="recaptcha-element"></div></div>
+                                        <button type="submit" class="w-full bg-rose-600 py-3 rounded-xl font-black text-[11px] uppercase tracking-widest shadow-lg hover:bg-rose-500 transition-colors">Pošalji</button>
                                     </form>
                                 </div>
                             </div>
                         `}
-                        <div id="feed-header" class="flex items-center gap-4 mb-8 opacity-50">
+                        <div id="feed-header" class="flex items-center gap-3 mb-6 opacity-30">
                             <div class="h-[1px] bg-white/20 flex-1"></div>
-                            <span class="text-[10px] font-black uppercase tracking-[0.4em]">Zadnje objave</span>
+                            <span class="text-[9px] font-black uppercase tracking-[0.3em]">Timeline</span>
                             <div id="active-filter-info"></div>
                             <div class="h-[1px] bg-white/20 flex-1"></div>
                         </div>
-                        <div id="feed" class="space-y-6 md:space-y-8"></div>
+                        <div id="feed" class="space-y-4"></div>
                     </main>
-                    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 bg-white text-black px-10 py-4 rounded-full text-xs font-black uppercase tracking-widest opacity-0 translate-y-5 transition-all duration-300 z-[100] shadow-2xl"></div>
+                    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-white text-black px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest opacity-0 translate-y-5 transition-all duration-300 z-[100] shadow-2xl"></div>
                 </div>`;
         }
 
@@ -271,59 +263,13 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-        
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: #020203; 
-            margin: 0; 
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-        
-        .gradient-bg { 
-            position: fixed; 
-            top: 0; left: 0; width: 100%; height: 100%; 
-            z-index: 0; 
-            background: radial-gradient(circle at 50% 0%, #1a1a3a 0%, #020203 80%); 
-        }
-        
-        .card { 
-            border-width: 1px; 
-            border-radius: 2rem; 
-            border-color: rgba(255,255,255,0.08); 
-            backdrop-filter: blur(20px); 
-            transition: transform 0.3s ease, box-shadow 0.3s ease; 
-            box-shadow: 0 20px 50px -12px rgba(0,0,0,0.7);
-        }
-
-        .card:hover {
-            transform: translateY(-2px);
-            border-color: rgba(255,255,255,0.15);
-        }
-        
-        .input { 
-            width: 100%; 
-            background: rgba(255,255,255,0.03); 
-            border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 1.25rem; 
-            padding: 1.1rem 1.4rem; 
-            color: white; 
-            font-size: 15px; 
-            outline: none; 
-            transition: 0.2s; 
-        }
-        
+        body { font-family: 'Inter', sans-serif; background: #020203; margin: 0; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        .gradient-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background: radial-gradient(circle at 50% 0%, #1a1a3a 0%, #020203 80%); }
+        .card { border-width: 1px; border-radius: 1rem; border-color: rgba(255,255,255,0.08); backdrop-filter: blur(20px); box-shadow: 0 10px 30px -10px rgba(0,0,0,0.6); }
+        .input { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.75rem; padding: 0.7rem 0.9rem; color: white; font-size: 13px; outline: none; transition: 0.2s; }
         .input:focus { border-color: #e11d48; background: rgba(255,255,255,0.07); }
-        
-        .animate-slide-up { 
-            animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
-        }
-        
-        @keyframes slideUp { 
-            from { opacity: 0; transform: translateY(40px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
-        
+        .animate-slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         select option { background: #0a0a0a; color: white; }
     </style>
 </head>
